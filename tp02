@@ -347,4 +347,63 @@ plt.ylabel('Valor real')
 plt.title('Matriz de confusión')
 plt.show()
 
+#%% Cross validation para comparar
+
+tree = DecisionTreeClassifier(random_state=42)
+
+param_grid = {
+    'max_depth' : depths, 
+    'min_samples_split' : [2,5,10], 
+    'min_samples_leaf' : [2], 
+    'criterion' : ['gini', 'entropy'] }
+
+cv = StratifiedKFold(n_splits= 4, shuffle= True, random_state=42)
+
+grid_search = GridSearchCV(
+    estimator = tree, 
+    param_grid = param_grid, 
+    cv=cv, 
+    scoring = 'accuracy', 
+    n_jobs = -1, 
+    verbose = 1)
+
+grid_search.fit(x_dev, y_dev)
+
+#Guardo los resultados de los árboles
+resultados = pd.DataFrame(grid_search.cv_results_)
+
+print("Mejores parametros encontrados")
+print(grid_search.best_params_)
+print(f"Mejor exactitud promedio en validacion: {grid_search.best_score_:.3f}")
+
+# Mejores parametros encontrados
+# {'criterion': 'entropy', 'max_depth': 10, 'min_samples_leaf': 2, 'min_samples_split': 5}
+# Mejor exactitud promedio en validacion: 0.716
+
+#%% Predicciones
+# Busco el mejor el arbol
+mejor_arbol = grid_search.best_estimator_
+
+# Visualizar el arbol
+plt.figure(figsize=(25, 12))
+plot_tree(mejor_arbol, filled=True, max_depth=3, fontsize=8)
+plt.title("Árbol de Decisión con profundidad parcial 3 (Máxima profunidad = 10)")
+plt.show()
+
+# Lo entreno
+mejor_arbol.fit(x_dev, y_dev)
+
+# Predicciones
+y_pred_held = mejor_arbol.predict(x_held)
+
+# Vizualizacion matriz de confusion 
+
+cm = confusion_matrix(y_held, y_pred_held)
+
+plt.figure(figsize=(6, 5))
+sb.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicción')
+plt.ylabel('Valor real')
+plt.title('Matriz de confusión')
+plt.show()
 
