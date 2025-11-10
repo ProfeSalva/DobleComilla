@@ -74,3 +74,22 @@ for i in range(10):
     
 plt.tight_layout()
 plt.show()
+
+#%% Representacion por medianas
+
+x= df_datos.drop('label', axis = 1).values
+y = df_datos['label'].values
+
+plt.title('Valor mediano del pixel utilizado en cada clase')
+plt.axis('off')
+
+
+for i in range(10):
+    median_img = np.median(x[y == i], axis = 0).reshape(28,28)
+    plt.subplot(2, 5, i+1)
+    plt.imshow(median_img, cmap = 'plasma')
+    plt.title(f'clase{i}')
+    plt.axis('off')
+    
+plt.tight_layout()
+plt.show()
