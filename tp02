@@ -186,3 +186,13 @@ sb.scatterplot(x = x_pca[:, 0], y = x_pca [:, 1], hue=y, palette = 'tab10', s=10
 plt.title('proyeccion PCA de los caracteres de clase 3 y 6')
 plt.show()
 
+mask = (y == 4) | (y==5)
+x_sub = x[mask]
+y_sub = y [mask]
+
+x_train, x_test, y_train, y_test = train_test_split(x_sub, y_sub, test_size = 0.30, random_state =42, stratify = y_sub)
+
+k = 700
+selector = SelectKBest(score_func= f_classif, k=k)
+x_train_sel = selector.fit_transform(x_train, y_train)
+x_test_sel = selector.transform(x_test)
