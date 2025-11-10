@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+
+@author: Salva
+"""
+"""
+Nombre del grupo: "Comillas Dobles"
+Participantes:
+- Durand, Salvador
+- Mateos, Martin
+"""
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sb
+from scipy.signal import find_peaks
+from IPython import get_ipython
+import pandas as pd
+import sklearn as sck
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV, StratifiedGroupKFold
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, f1_score, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
+
+df_datos = pd.read_csv('C:/Users/ADMIN/Downloads/salvaTP02//kuzushiji_full.csv')
+
+df_etiqueta = pd.read_csv('C:/Users/ADMIN/Downloads/salvaTP02//kmnist_classmap_char.csv')
+
+
+print(len(df_datos))
+
+print(len(df_datos.columns))
+
+print(len(df_etiqueta))
+
+primero = df_datos.iloc[55,[i for i in range (784)]]
+
+primero = np.array(primero).reshape((28,28))
+
+plt.imshow(primero, cmap = 'gray')
+plt.title("Imagen 56")
+plt.show
+
+#%%
+
+conteo_clases = df_datos['label'].value_counts()
+
+# Creo el gráfico de barras
+plt.bar(conteo_clases.index, conteo_clases.values)
+plt.title("Cantidad de ejemplos por clase")
+plt.xlabel("Clase")
+plt.ylabel("Cantidad de imágenes")
+plt.xticks(range(10))
+plt.show()
+
+
+#%% Represenacion por promedio
+x= df_datos.drop('label', axis = 1).values
+y = df_datos['label'].values
+
+plt.title('Promedio del pixel utilizado en cada clase')
+plt.axis('off')
+
+for i in range(10):
+    mean_img = x[y == i].mean(axis = 0).reshape(28,28)
+    plt.subplot(2, 5, i+1)
+    plt.imshow(mean_img, cmap = 'plasma')
+    plt.title(f'clase{i}')
+    plt.axis('off')
+    
+plt.tight_layout()
+plt.show()
