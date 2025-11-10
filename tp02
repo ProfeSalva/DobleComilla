@@ -301,6 +301,7 @@ print("Datos de etiquetas de validación (held out): ", y_held.shape)
 
 depths = [i for i in range(1,9, 2)] + [10] # 1, 3, 5, 7 para acortar el tiempo de ejecucion.
 
+
 mean_scores = []
 
 for d in depths:
@@ -312,3 +313,38 @@ for d in depths:
 print(f"Profundidad = {d}, accuracy promedio = {np.mean(scores):.4f}")
 best_depth = depths[np.argmax(mean_scores)]
 print(f"\n Mejor profundidad seleccionada: {best_depth}")
+
+#%% Seleccionamos la mejor profundidad y lo entrenamos
+
+best_tree = DecisionTreeClassifier(max_depth= best_depth, random_state= 42)
+best_tree.fit(x_dev, y_dev)
+
+#%% comparación de rendimiento x max profundidad
+
+plt.figure(figsize=(8,5))
+plt.plot(depths, mean_scores, marker='o', linestyle='-', color='blue')
+plt.title('Exactitud promedio vs profundidad del árbol')
+plt.xlabel('Profundidad máxima (10)')
+plt.ylabel('Exactitud promedio (accuracy)')
+plt.xticks(depths)
+plt.grid(True)
+plt.show()
+
+# Mejor arbol
+y_pred = best_tree.predict(x_held)
+
+#%% Visualizamos metricas
+
+print("\n reporte de Clasificacion: ")
+print(classification_report(y_held, y_pred))
+cm = confusion_matrix(y_held, y_pred)
+
+#imagen de la matriz
+plt.figure(figsize=(6, 5))
+sb.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicción')
+plt.ylabel('Valor real')
+plt.title('Matriz de confusión')
+plt.show()
+
+
