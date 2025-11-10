@@ -221,4 +221,75 @@ print(classification_report(y_test, y_pred))
 print(f"Cantidad de datos usados: {k} ")
 print(f"Cantidad de vecinos usados: {k_neigbors}")
 
+#%% matriz de confusion 700 pixeles y 3 vecinos
+cm = confusion_matrix(y_test, y_pred, labels=[4, 5])
+
+plt.figure(figsize=(5,4))
+sb.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+           xticklabels=[4, 5], yticklabels=[4, 5])
+plt.xlabel('Predicción')
+plt.ylabel('Valor real')
+plt.title('Matriz de confusión para 700 atributos (clases 4 y 5)')
+plt.show()
+
+#%% Comparacion de modelos KNN 
+
+k_vecinos = [3, 5, 7, 9, 11]
+pixeles = [3, 10, 100, 300, 500, 700, 784]
+resultados = []
+
+for p in pixeles:
+    selector = SelectKBest(f_classif, k=p)
+    x_train_sel = selector.fit_transform(x_train, y_train)
+    x_test_sel = selector.transform(x_test)
+    for k in k_vecinos:
+        modelo = KNeighborsClassifier(n_neighbors=k)
+        modelo.fit(x_train_sel, y_train)
+        y_pred = modelo.predict(x_test_sel)
+        
+        acc = accuracy_score(y_test, y_pred)
+        prec = precision_score(y_test, y_pred, average='macro')
+        rec = recall_score(y_test, y_pred, average='macro')
+        
+        resultados.append((p, k, acc, prec, rec))
+
+df_resultados = pd.DataFrame(resultados, columns=['Pixeles', 'Vecinos', 'Accuracy', 'Precision', 'Recall'])
+
+top3 = df_resultados.nlargest(3, 'Accuracy')
+print(top3)
+
+def rendimientoKNN(metrica:str):
+    plt.figure(figsize=(10,6))
+    for k in k_vecinos:
+        subset = df_resultados[df_resultados['Vecinos'] == k]
+        plt.plot(subset['Pixeles'], subset[metrica], marker='o', label=f'k={k}')
+
+    plt.xlabel('Cantidad de atributos seleccionados')
+    plt.ylabel(metrica)
+    plt.title(f'{metrica} según cantidad de atributos y vecinos')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
+rendimientoKNN('Accuracy')
+rendimientoKNN('Precision')
+rendimientoKNN('Recall')
+
+#%% Entrenamiento del modelo con los resultados top3
+#Tomamos todos los pixeles y 3 vecinos
+
+modelo = KNeighborsClassifier(n_neighbors=3)
+modelo.fit(x_train, y_train)
+y_pred = modelo.predict(x_test)
+
+#%% Matriz de confusión para el modelo entrenado
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(6, 5))
+sb.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=[4, 5], yticklabels=[4, 5])
+plt.xlabel('Predicción')
+plt.ylabel('Valor real')
+plt.title('Matriz de confusión')
+plt.show()
+
 
