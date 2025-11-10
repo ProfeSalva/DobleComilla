@@ -382,12 +382,6 @@ print(f"Mejor exactitud promedio en validacion: {grid_search.best_score_:.3f}")
 # Busco el mejor el arbol
 mejor_arbol = grid_search.best_estimator_
 
-# Visualizar el arbol
-plt.figure(figsize=(25, 12))
-plot_tree(mejor_arbol, filled=True, max_depth=3, fontsize=8)
-plt.title("Árbol de Decisión con profundidad parcial 3 (Máxima profunidad = 10)")
-plt.show()
-
 # Lo entreno
 mejor_arbol.fit(x_dev, y_dev)
 
