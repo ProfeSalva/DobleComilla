@@ -113,3 +113,76 @@ for i in range(10):
 plt.tight_layout()
 plt.show()
 
+#%% Clasificacion binaria - preparacion de los dataframe
+
+
+df_1 = df_datos[y == 1]
+df_2 = df_datos [y == 2]
+df_3 = df_datos [y == 3]
+df_4 = df_datos[y == 4 ]
+df_5 = df_datos[y == 5]
+df_6 = df_datos[y == 6]
+
+
+df_1y2 =pd.concat([df_1, df_2])
+df_1y3 =pd.concat([df_1, df_3])
+df_3y6 = pd.concat([df_3, df_6])
+df_2y6 = pd.concat([df_2,df_6])
+df_4y5 = pd.concat ([df_4, df_5])
+
+
+#%% PCA de clases 4 y 5
+
+x= df_4y5.drop('label', axis = 1).values
+y = df_4y5['label'].values
+pca = PCA(n_components=2)
+x_pca = pca.fit_transform(x)
+plt.figure(figsize = (8,6))
+sb.scatterplot(x = x_pca[:, 0], y = x_pca [:, 1], hue=y, palette = 'tab10', s=10)
+plt.title('proyeccion PCA de los caracteres')
+plt.show()
+
+
+#%% PCA de clases 2 y 6
+
+x = df_2y6.drop('label', axis = 1).values
+y = df_2y6['label'].values
+pca = PCA(n_components=2)
+x_pca = pca.fit_transform(x)
+plt.figure(figsize = (8,6))
+sb.scatterplot(x = x_pca[:, 0], y = x_pca [:, 1], hue=y, palette = 'tab10', s=10)
+plt.title('proyeccion PCA de los caracteres de clase 2 y 6')
+plt.show()
+
+#%% PCA de clases 2 y 1
+
+x = df_1y2.drop('label', axis = 1).values
+y = df_1y2['label'].values
+pca = PCA(n_components=2)
+x_pca = pca.fit_transform(x)
+plt.figure(figsize = (8,6))
+sb.scatterplot(x = x_pca[:, 0], y = x_pca [:, 1], hue=y, palette = 'tab10', s=10)
+plt.title('proyeccion PCA de los caracteres de clase 1 y 2')
+plt.show()
+
+#%% PCA entre clases 1 y 3
+
+x = df_1y3.drop('label', axis = 1).values
+y = df_1y3['label'].values
+pca = PCA(n_components=2)
+x_pca = pca.fit_transform(x)
+plt.figure(figsize = (8,6))
+sb.scatterplot(x = x_pca[:, 0], y = x_pca [:, 1], hue=y, palette = 'tab10', s=10)
+plt.title('proyeccion PCA de los caracteres de clase 1 y 3')
+plt.show()
+#%% PCA entre clases 3 y 6
+
+x = df_3y6.drop('label', axis = 1).values
+y = df_3y6['label'].values
+pca = PCA(n_components=2)
+x_pca = pca.fit_transform(x)
+plt.figure(figsize = (8,6))
+sb.scatterplot(x = x_pca[:, 0], y = x_pca [:, 1], hue=y, palette = 'tab10', s=10)
+plt.title('proyeccion PCA de los caracteres de clase 3 y 6')
+plt.show()
+
