@@ -93,3 +93,23 @@ for i in range(10):
     
 plt.tight_layout()
 plt.show()
+
+#%% Represetación por valor de varianza
+
+x= df_datos.drop('label', axis = 1).values
+y = df_datos['label'].values
+
+plt.title('Varianza de los pixeles utilizados en cada clase')
+plt.axis('off')
+
+
+for i in range(10):
+    median_img = np.var(x[y == i], axis = 0).reshape(28,28)
+    plt.subplot(2, 5, i+1)
+    plt.imshow(median_img, cmap = 'plasma')
+    plt.title(f'clase{i}')
+    plt.axis('off')
+    
+plt.tight_layout()
+plt.show()
+
